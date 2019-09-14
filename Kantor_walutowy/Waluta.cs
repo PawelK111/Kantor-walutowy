@@ -11,9 +11,8 @@ namespace Kantor_walutowy
         public string Nazwa { get; private set; }
         public int Przelicznik { get; private set; }
         public string Kod_waluty { get; private set; }
-        public double Kurs { get; private set; }
-
-        public Waluta(string nazwa, int przelicznik, string kod_waluty, double kurs)
+        public decimal Kurs { get; private set; }
+        public Waluta(string nazwa, int przelicznik, string kod_waluty, decimal kurs)
         {
             Nazwa = nazwa;
             Przelicznik = przelicznik;

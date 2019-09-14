@@ -9,12 +9,15 @@
     <Grid Background="Gray">
         <ComboBox x:Name="Currency" HorizontalAlignment="Left" VerticalAlignment="Top" Width="217" Margin="108,44,0,0" />
         <ComboBox x:Name="CurrencyTarget" HorizontalAlignment="Left" VerticalAlignment="Top" Width="217" Margin="108,77,0,0"/>
-        <Button x:Name="ConvertButton" Content="Przelicz" HorizontalAlignment="Left" VerticalAlignment="Top" Width="74" Margin="176,151,0,0" Click="ConvertButton_Click"/>
+        <Button x:Name="CalculateButton" Content="Przelicz" HorizontalAlignment="Left" VerticalAlignment="Top" Width="74" Margin="176,151,0,0" Click="CalculateButton_Click"/>
         <TextBox x:Name="AmountBox" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="217" Margin="108,111,0,0"/>
         <Label Content="Mam:" Foreground="#FFFFFF" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="13,40,0,0" FontWeight="Bold"/>
         <Label Content="Chcę otrzymać:" Foreground="#FFFFFF" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="13,73,0,0" FontWeight="Bold"/>
         <Label Content="Ilość:" Foreground="#FFFFFF" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="13,108,0,0" FontWeight="Bold"/>
-        <Button Content="Zamień" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="340,58,0,0" Height="32" Click="Button_Click"/>
+        <Button Content="Zmień" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="340,59,0,0" Height="26" Click="ChangeButton_Click"/>
+        <Button Content="Atkualizuj" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="340,151,0,0" Click="UpdateButton_Click"/>
+        <Label x:Name="UpdateOfExchangeLabel" Content="xxxx" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="339,173,0,0" Width="76" Height="29" FontSize="10"/>
+        <Label Content="Last update:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="271,173,0,0" Width="74" FontSize="10"/>
 
     </Grid>
 </Window>

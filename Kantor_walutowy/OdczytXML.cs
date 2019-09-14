@@ -15,7 +15,7 @@ namespace Kantor_walutowy
         public XmlNodeList Kurs { get; private set; }
         public OdczytXML()
         {
-            doc.Load("data.xml");
+            doc.Load("Waluty.xml");
             Nazwa = doc.GetElementsByTagName("nazwa_waluty");
             Przelicznik = doc.GetElementsByTagName("przelicznik");
             Kod = doc.GetElementsByTagName("kod_waluty");

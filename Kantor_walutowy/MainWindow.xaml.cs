@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Net;
+using System.IO;
 
 namespace Kantor_walutowy
 {
@@ -21,84 +23,106 @@ namespace Kantor_walutowy
     public partial class MainWindow : Window
     {
         ListaWalut listaWalut;
-        Calculator calculator = new Calculator();
-        
+        Polaczenie polaczenie;
+        static string website = "http://nbp.pl/kursy/xml/lasta.xml";
         public MainWindow()
         {
             InitializeComponent();
+            UpdateExchanges();
+            DataTXT();
             try
             {
-                Polaczenie polaczenie = new Polaczenie("http://nbp.pl/kursy/xml/lasta.xml");
-            }
-            catch
-            {
-                MessageBox.Show("Brak połączenia z internetem! Aplikacja spróbuje odczytać ostatni plik XML zapisany na tym komputerze!","Błąd połączenia",MessageBoxButton.OK,MessageBoxImage.Warning);
-            }
-            try
-            { 
-                listaWalut = new ListaWalut();
-                listaWalut.UtworzListe();
-                int lp = 1;
-                foreach (Waluta aWaluta in listaWalut.waluta)
+                if (CheckInternetCoonnection() == false) // create object from previously downloaded XML file on HDD
+                    listaWalut = new ListaWalut();
+                foreach (var aWaluta in listaWalut.waluta)
                 {
-                    Currency.Items.Add(lp + ". " + aWaluta.Nazwa);
-                    CurrencyTarget.Items.Add(lp++ + ". " + aWaluta.Nazwa);
+                   Currency.Items.Add(aWaluta.Key + ". " + aWaluta.Value.Nazwa);
+                   CurrencyTarget.Items.Add(aWaluta.Key + ". " + aWaluta.Value.Nazwa);
                 }
             }
             catch
             {
-                MessageBox.Show("Plik data.xml nie istnieje!\nSprawdź swoje połączenie z internetem, a następnie spróbuj ponownie uruchomić aplikację!", "Plik nie istnieje!", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Plik Waluty.xml nie istnieje!\nSprawdź swoje połączenie z internetem, a następnie spróbuj ponownie uruchomić aplikację!", "Plik nie istnieje!", MessageBoxButton.OK, MessageBoxImage.Error);
                 Application.Current.Shutdown();
             }
         }
 
-        private void ConvertButton_Click(object sender, RoutedEventArgs e)
+        private void CalculateButton_Click(object sender, RoutedEventArgs e)
         {
-            double kurs_waluty1 = 0, kurs_waluty2 = 0;
-            string kod1 = "", kod2 = "";
-            int przelicznik1 = 0, przelicznik2 = 0;
             try
             {
+                Waluta wal1 = null, wal2 = null;
                 if (Currency.Text == "" || CurrencyTarget.Text == "")
-                {
                     MessageBox.Show("Podaj waluty!", "Brak waluty!", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
                 else
                 {
-                    for (int i = 1; i < 36; i++)
+                    for (int i = 0; i < 35; i++)
                     {
                         if (Currency.Text.Contains(i.ToString()))
-                        {
-                            kod1 = listaWalut.waluta[i - 1].Kod_waluty;
-                            kurs_waluty1 = listaWalut.waluta[i - 1].Kurs;
-                            przelicznik1 = listaWalut.waluta[i - 1].Przelicznik;
-                        }
+                            wal1 = listaWalut.waluta[i];
                         if (CurrencyTarget.Text.Contains(i.ToString()))
-                        {
-                            kod2 = listaWalut.waluta[i - 1].Kod_waluty;
-                            kurs_waluty2 = listaWalut.waluta[i - 1].Kurs;
-                            przelicznik2 = listaWalut.waluta[i - 1].Przelicznik;
-                        }
+                            wal2 = listaWalut.waluta[i];
                     }
-                    calculator.Calculate(double.Parse(AmountBox.Text), kurs_waluty1, kurs_waluty2, przelicznik1, przelicznik2, kod1, kod2);
+                    Calculator.Calculate(decimal.Parse(AmountBox.Text.Replace(',', '.')), wal1, wal2);
                 }
             }
-            catch
+            catch(Exception ex)
             {
-                    MessageBox.Show("Próbujesz podać nieprawidłowe dane!\nJeżeli chcesz podać wartość z przecinkiem, użyj przecinka zamiast kropki. ", "Błąd wyliczenia", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(ex.ToString(), "ERROR", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
-        private void Button_Click(object sender, RoutedEventArgs e)
+
+        private void ChangeButton_Click(object sender, RoutedEventArgs e)
         {
-            string bufor;
-            bufor = Currency.Text;
+            string bufor = Currency.Text;
             Currency.Text = CurrencyTarget.Text;
             CurrencyTarget.Text = bufor;
         }
 
-        void ReadingXML()
+        private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
+            UpdateExchanges();
+        } 
 
+        private void UpdateExchanges()
+        {
+            DateTime date = DateTime.Now;
+            CheckInternetCoonnection();
+            if (CheckInternetCoonnection() == true)
+            {
+                polaczenie = new Polaczenie(website);
+                listaWalut = new ListaWalut();
+                UpdateOfExchangeLabel.Content = date.Date.ToString("MM/dd/yyyy");
+            }
+        }
+
+        private bool CheckInternetCoonnection()
+        {
+            try
+            {
+                using (var client = new WebClient())
+                using (client.OpenRead(website))
+                    return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void DataTXT() 
+        {
+            try
+            {
+                if (CheckInternetCoonnection() == true) // save the date of last update into TXT file
+                    File.WriteAllText(@"DateOfLastUptade.txt", UpdateOfExchangeLabel.Content.ToString());
+                else // read the date of last update from TXT file
+                    UpdateOfExchangeLabel.Content = File.ReadAllText(@"DateOfLastUptade.txt");
+            }
+            catch
+            {
+                UpdateOfExchangeLabel.Content = "#ERROR!";
+            }
         }
     }
 }

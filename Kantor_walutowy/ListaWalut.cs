@@ -10,16 +10,16 @@ namespace Kantor_walutowy
     class ListaWalut
     {
         OdczytXML odczytXML = new OdczytXML();
-        public List<Waluta> waluta = new List<Waluta>();
-        public void UtworzListe()
+        public Dictionary<int, Waluta> waluta = new Dictionary<int, Waluta>();
+        public ListaWalut()
         {
             for (int i = 0; i < 35; i++)
             {
-                waluta.Add(new Waluta(odczytXML.Nazwa[i].InnerXml, 
-                    int.Parse(odczytXML.Przelicznik[i].InnerXml), 
-                    odczytXML.Kod[i].InnerXml, 
-                    double.Parse(odczytXML.Kurs[i].InnerXml)));
+                waluta.Add(i+1, new Waluta(odczytXML.Nazwa[i].InnerXml,
+                    int.Parse(odczytXML.Przelicznik[i].InnerXml),
+                    odczytXML.Kod[i].InnerXml,
+                    decimal.Parse(odczytXML.Kurs[i].InnerXml)));
             }
-        }  
+        }
     }
 }

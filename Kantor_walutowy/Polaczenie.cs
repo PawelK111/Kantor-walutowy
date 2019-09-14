@@ -15,7 +15,7 @@ namespace Kantor_walutowy
         public Polaczenie(string url)
         {
             doc.Load(url);
-            doc.Save("data.xml");
+            doc.Save("Waluty.xml");
         }
     }
 }

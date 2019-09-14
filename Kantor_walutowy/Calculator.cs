@@ -4,21 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Diagnostics;
 
 namespace Kantor_walutowy
 {
-    class Calculator
+    static class Calculator
     {
-        public void Calculate(double ilosc, double kurs_waluty1, double kurs_waluty2, int przelicznik1, int przelicznik2, string nazwa1, string nazwa2)
+        static decimal wynik, zlotowki;
+
+        public static void Calculate(decimal ilosc, Waluta waluta1, Waluta waluta2)
         {
-            double wynik = (Math.Round(ilosc,2) * kurs_waluty1) / przelicznik1;
-            double zlotowki = wynik;
-            wynik = (wynik / kurs_waluty2) * przelicznik2;
-
-
-            MessageBox.Show("Posiadasz: " + Math.Round(ilosc,2) + " " + nazwa1 + "\nW przeliczeniu na PLN: " + Math.Round(zlotowki,2) + "\nOtrzymasz: " + Math.Round(wynik,2) + " " + nazwa2, 
-                "Przeliczanie zakończone",
-                MessageBoxButton.OK,MessageBoxImage.Information);
+            wynik = ilosc * waluta1.Kurs / waluta1.Przelicznik;
+            zlotowki = wynik / 10000;
+            wynik = (wynik / waluta2.Kurs) * waluta2.Przelicznik;
+            MessageBox.Show($"Posiadasz: {Math.Round(ilosc, 2)} {waluta1.Kod_waluty}\n" +
+                $"W pezeliczeniu na PLN: {Math.Round(zlotowki,2)}\n" +
+                $"Otrzymasz: {Math.Round(wynik, 2)} {waluta2.Kod_waluty}",
+               "Przeliczanie zakończone",
+               MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
